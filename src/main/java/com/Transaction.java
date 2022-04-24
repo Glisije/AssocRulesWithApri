@@ -2,20 +2,27 @@ package com;
 
 import java.util.ArrayList;
 
+//Класс транзакции
 public class Transaction {
 
+    //Номер транзакции
     private int num;
+    //Список моделей(элементов) в транзакции
     private ArrayList<Item> models;
+    //Количество моделей(элементов)
     private int numOfModels;
 
     public Transaction(){
         models = new ArrayList<>();
+        this.numOfModels = models.size();
     }
 
     public Transaction (int num) {
         this.num = num;
         models = new ArrayList<>();
     }
+
+
 
     public void addModel(Item model){
         models.add(model);

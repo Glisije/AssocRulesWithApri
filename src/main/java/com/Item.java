@@ -1,8 +1,11 @@
 package com;
 
+//Класс элемента (модели)
 public class Item {
 
+    //Тип
     private String name;
+    //Поддержка
     private double supp;
 
     Item(String name){

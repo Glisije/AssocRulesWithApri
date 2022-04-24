@@ -6,14 +6,19 @@ import java.util.Objects;
 
 import static com.Parser.*;
 
+//Класс релизующий Априори
 public class Apriori {
 
+    //Список уникальных элементов
     private final ArrayList<Item> uniqueItems;
+    //Список всех транзакций
     private final ArrayList<Transaction> transactions;
+    //Список всех ункиальных элементов, проходящих минимальную поддержку
     private final ArrayList<Item> uniqueItemsWithMinSup;
+    //Сприсок всех ItemSets
     private final ArrayList<ItemSet> itemSets = new ArrayList<>();
+    //Минимальная поддержка
     private final int minSup;
-
     Apriori(String path, int minSup) throws IOException {
         this.minSup = minSup;
         this.uniqueItems = getUniqueItems(path);
@@ -43,13 +48,24 @@ public class Apriori {
 
     //НЕ реализовано!
     private void findeDoubleItemSupport(){
+        //дергаем первый элемент
         for (int i = 0; i < uniqueItems.size(); i++){
-            ArrayList <Item> items = new ArrayList<>();
-            items.add(uniqueItems.get(i));
+            ItemSet tmpSet = new ItemSet();
+//          ArrayList <Item> items = new ArrayList<>();
+//          items.add(uniqueItems.get(i));
+            tmpSet.addItem(uniqueItems.get(i));
+            //дергаем второй элемент
             for (int j = i; j < uniqueItems.size(); j++){
-                items.add(uniqueItems.get(j));
-                itemSets.add(new ItemSet(items));
-//                items.remove(1);
+                //Item tmpItem = uniqueItems.get(j);
+                //Проверка на повторы
+                if (j > i){
+                    //items.add(tmpItem);
+                    tmpSet.addItem(uniqueItems.get(j));
+                    //itemSets.add(new ItemSet(items));
+                    itemSets.add(tmpSet);
+                    tmpSet.removeLast();
+
+                }
             }
         }
     }

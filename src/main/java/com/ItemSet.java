@@ -4,10 +4,18 @@ import java.util.ArrayList;
 
 public class ItemSet{
 
-    private final ArrayList<Item> items;
+    private ArrayList<Item> items;
 
     ItemSet(ArrayList<Item> items){
         this.items = items;
+    }
+
+    ItemSet(){
+        this.items = new ArrayList<>();
+    }
+
+    public void removeLast(){
+        this.items.remove(items.size()-1);
     }
 
     public ArrayList<Item> getItemSet() {
