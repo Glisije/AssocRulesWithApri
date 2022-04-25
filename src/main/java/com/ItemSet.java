@@ -9,6 +9,8 @@ public class ItemSet{
     private double supp;
     //Номер
     private int num;
+    //ПодСеты
+    private ArrayList<ItemSet> subItemsSets = new ArrayList<>();
 
 
 
@@ -20,6 +22,7 @@ public class ItemSet{
 
     ItemSet(){
         this.items = new ArrayList<>();
+        supp = 0;
     }
 
     public void plusSup() {
@@ -46,6 +49,14 @@ public class ItemSet{
 
     public int getNum() {
         return num;
+    }
+
+    public void addSubItems(ItemSet subItemsSet){
+        subItemsSets.add(subItemsSet);
+    }
+
+    public ArrayList<ItemSet> getSubItemsSets() {
+        return subItemsSets;
     }
 
     @Override
