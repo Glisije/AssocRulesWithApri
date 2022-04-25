@@ -31,9 +31,9 @@ public class Parser {
 
         myExcelBook.close();
 
-        for (String namesOfUniqueItem : namesOfUniqueItems) {
-            uniqueItems.add(new Item(namesOfUniqueItem));
-        }
+            for (int i = 0; i < namesOfUniqueItems.size(); i ++)
+            uniqueItems.add(new Item(namesOfUniqueItems.get(i), i));
+
 
         return uniqueItems;
     }

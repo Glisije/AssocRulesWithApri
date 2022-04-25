@@ -5,12 +5,30 @@ public class Item {
 
     //Тип
     private String name;
+    //Имя для печати
+    private String printName;
     //Поддержка
     private double supp;
+    //Номер
+    private int num;
 
     Item(String name){
         this.name = name;
         this.supp = 0;
+        this.printName = name;
+        while (printName.length() != "Architecture".length()){
+            printName+=" ";
+        }
+    }
+
+    Item(String name, int num){
+        this.name = name;
+        this.supp = 0;
+        this.printName = name;
+        while (printName.length() != "Architecture".length()){
+            printName+=" ";
+        }
+        this.num = num;
     }
 
     public String getName() {
@@ -31,6 +49,14 @@ public class Item {
 
     public void plusSup() {
         this.supp++;
+    }
+
+    public String getPrintName() {
+        return printName;
+    }
+
+    public int getNum() {
+        return num;
     }
 
     @Override

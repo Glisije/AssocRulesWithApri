@@ -46,40 +46,59 @@ public class Apriori {
         }
     }
 
-    //НЕ реализовано!
-    private void findeDoubleItemSupport(){
-        //дергаем первый элемент
-        for (int i = 0; i < uniqueItems.size(); i++){
-            ItemSet tmpSet = new ItemSet();
-//          ArrayList <Item> items = new ArrayList<>();
-//          items.add(uniqueItems.get(i));
-            tmpSet.addItem(uniqueItems.get(i));
-            //дергаем второй элемент
-            for (int j = i; j < uniqueItems.size(); j++){
-                //Item tmpItem = uniqueItems.get(j);
-                //Проверка на повторы
-                if (j > i){
-                    //items.add(tmpItem);
-                    tmpSet.addItem(uniqueItems.get(j));
-                    //itemSets.add(new ItemSet(items));
-                    itemSets.add(tmpSet);
-                    tmpSet.removeLast();
+    private void findeDoubleItemSupport() {
+        //Массив с временными данными
+        ArrayList<Item> tmp = new ArrayList<>();
+        for (int i = 0; i < uniqueItems.size(); i++) {
+            ArrayList<Item> items = new ArrayList<>();
+            //Проверка на первое добавление в items
+            if(i==0) {
+                items.add(uniqueItems.get(i));
+            }//Если не первый раз добавляем, то очищаем первый элемент и добавляем в начало следующий
+            else {
+                items.clear();
+                items.add(uniqueItems.get(i));
+            }
+            for (int j = i; j < uniqueItems.size(); j++) {
+                if (j > i) {
+                    items.add(uniqueItems.get(j));
+                    //добавляем в временный лист содержимое items
+                    tmp.addAll(items);
+                    itemSets.add(new ItemSet(tmp,i+j));
+                    //обнуляем tmp
+                    tmp = new ArrayList<>();
+                    items.remove(1);
 
+                }
+            }
+        }
+
+        //Установление поддержки
+        for (ItemSet itemSet : itemSets) {
+            //Смотрим каждую траназакцию для каждого ItemSet
+            for (Transaction transaction : transactions) {
+                //Смотрим каждый элемент транзакции
+                for (int i = 0; i < transaction.getNumOfModels(); i++) {
+                    //Если первый элемент ItemSet совпадает, проверяем второй
+                    if (Objects.equals(itemSet.getItemSet().get(0).getName(), transaction.getModels().get(i).getName())){
+                        for (int j = 0; j < transaction.getNumOfModels(); j++) {
+                            if (Objects.equals(itemSet.getItemSet().get(1).getName(), transaction.getModels().get(j).getName())){
+                                itemSet.plusSup();
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
     public void start(){
-        System.out.println(uniqueItems);
-        System.out.println(transactions);
+        Print.transactions(transactions);
         findSupport();
-        System.out.println(uniqueItems);
-        System.out.println(transactions);
+        Print.items(uniqueItems);
         deleteItemsWithoutMinSup();
         findeDoubleItemSupport();
-        System.out.println(itemSets);
-
+        Print.itemSets(itemSets);
     }
 
 
