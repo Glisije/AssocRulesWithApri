@@ -25,6 +25,12 @@ public class ItemSet{
         supp = 0;
     }
 
+    ItemSet(ItemSet itemSet){
+        this.items = itemSet.getItemSet();
+        this.supp = itemSet.getSupp();
+        this.subItemsSets = itemSet.getSubItemsSets();
+    }
+
     public void plusSup() {
         this.supp++;
     }
@@ -57,6 +63,10 @@ public class ItemSet{
 
     public ArrayList<ItemSet> getSubItemsSets() {
         return subItemsSets;
+    }
+
+    public void setSupp(double supp) {
+        this.supp = supp;
     }
 
     @Override

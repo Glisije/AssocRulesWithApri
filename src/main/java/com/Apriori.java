@@ -3,6 +3,7 @@ package com;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Scanner;
 
 import static com.Parser.*;
 
@@ -23,6 +24,8 @@ public class Apriori {
     private final ArrayList<ItemSet> itemSets3 = new ArrayList<>();
     //Список ItemSet из трех элементов, прошедших минимальную поддержку
     private final ArrayList<ItemSet> itemSets3WithMinSup = new ArrayList<>();
+    //Список Правил
+    private final ArrayList<Rules> rules = new ArrayList<>();
     //Минимальная поддержка
     private final int minSup;
 
@@ -185,28 +188,159 @@ public class Apriori {
     private void subSetAdd(){
 
         //Для каждого ItemSet из трех элементов, прошедшего minSup
-        for (ItemSet itemSet : itemSets3WithMinSup) {
+        for (ItemSet itemSet3 : itemSets3WithMinSup) {
 
+            //Добавляем элементы в subItemSet
             ItemSet tmp = new ItemSet();
-            tmp.addItem(itemSet.getItemSet().get(0));
-            tmp.addItem(itemSet.getItemSet().get(1));
-            itemSet.getSubItemsSets().add(tmp);
+            tmp.addItem(itemSet3.getItemSet().get(0));
+            tmp.addItem(itemSet3.getItemSet().get(1));
+            //Сравниваем уже имеющиеся ItemSet со временным и если они сходятся, то мы приравиниваем их
+            for (ItemSet itemSet2 : itemSets2){
+                int tmpInt = 0;
+                for (Item subItem : tmp.getItemSet()){
+                   for (Item item : itemSet2.getItemSet()){
+                       if (Objects.equals(subItem.getName(), item.getName())){
+                           tmpInt ++;
+                       }
+                   }
+                }
+                if (tmpInt == 2) {
+                    //tmp.setSupp(itemSet2.getSupp());
+                    tmp = itemSet2;
+                    break;
+                }
+            }
+            itemSet3.getSubItemsSets().add(tmp);
 
             ItemSet tmp2 = new ItemSet();
-            tmp2.addItem(itemSet.getItemSet().get(0));
-            tmp2.addItem(itemSet.getItemSet().get(2));
-            itemSet.getSubItemsSets().add(tmp2);
+            tmp2.addItem(itemSet3.getItemSet().get(0));
+            tmp2.addItem(itemSet3.getItemSet().get(2));
+            //Сравниваем уже имеющиеся ItemSet со временным и если они сходятся, то мы приравиниваем их
+            for (ItemSet itemSet2 : itemSets2){
+                int tmpInt = 0;
+                for (Item subItem : tmp2.getItemSet()){
+                    for (Item item : itemSet2.getItemSet()){
+                        if (Objects.equals(subItem.getName(), item.getName())){
+                            tmpInt ++;
+                        }
+                    }
+                }
+                if (tmpInt == 2) {
+                    //tmp.setSupp(itemSet2.getSupp());
+                    tmp2 = itemSet2;
+                    break;
+                }
+            }
+            itemSet3.getSubItemsSets().add(tmp2);
 
             ItemSet tmp3 = new ItemSet();
-            tmp3.addItem(itemSet.getItemSet().get(1));
-            tmp3.addItem(itemSet.getItemSet().get(2));
-            itemSet.getSubItemsSets().add(tmp3);
+            tmp3.addItem(itemSet3.getItemSet().get(1));
+            tmp3.addItem(itemSet3.getItemSet().get(2));
+            //Сравниваем уже имеющиеся ItemSet со временным и если они сходятся, то мы приравиниваем их
+            for (ItemSet itemSet2 : itemSets2){
+                int tmpInt = 0;
+                for (Item subItem : tmp3.getItemSet()){
+                    for (Item item : itemSet2.getItemSet()){
+                        if (Objects.equals(subItem.getName(), item.getName())){
+                            tmpInt ++;
+                        }
+                    }
+                }
+                if (tmpInt == 2) {
+                    //tmp.setSupp(itemSet2.getSupp());
+                    tmp3 = itemSet2;
+                    break;
+                }
+            }
+            itemSet3.getSubItemsSets().add(tmp3);
 
-            itemSet.getSubItemsSets().add(itemToItemSet(itemSet.getItemSet().get(0)));
-            itemSet.getSubItemsSets().add(itemToItemSet(itemSet.getItemSet().get(1)));
-            itemSet.getSubItemsSets().add(itemToItemSet(itemSet.getItemSet().get(2)));
+            itemSet3.getSubItemsSets().add(itemToItemSet(itemSet3.getItemSet().get(0)));
+            for (Item element : uniqueItems) {
+                if (Objects.equals(element.getName(), itemSet3.getSubItemsSets().get(3).getItemSet().get(0).getName())) {
+                    itemSet3.getSubItemsSets().get(3).setSupp(element.getSupp());
+                    break;
+                }
+            }
+
+
+            itemSet3.getSubItemsSets().add(itemToItemSet(itemSet3.getItemSet().get(1)));
+            for (Item element : uniqueItems) {
+                if (Objects.equals(element.getName(), itemSet3.getSubItemsSets().get(4).getItemSet().get(0).getName())) {
+                    itemSet3.getSubItemsSets().get(4).setSupp(element.getSupp());
+                    break;
+                }
+
+            }
+
+
+            itemSet3.getSubItemsSets().add(itemToItemSet(itemSet3.getItemSet().get(2)));
+            for (Item element : uniqueItems) {
+                if (Objects.equals(element.getName(), itemSet3.getSubItemsSets().get(5).getItemSet().get(0).getName())) {
+                    itemSet3.getSubItemsSets().get(5).setSupp(element.getSupp());
+                    break;
+                }
+
+            }
 
         }
+    }
+
+
+    //Не работает
+    //Генерация правил
+    public void rulesGeneration(){
+        //Для каждого ItemSet3, прошедшего мин поддержку
+        ArrayList <ItemSet> itemSets3WithMinSupCLONE = new ArrayList<>(itemSets3WithMinSup.size());
+        for (ItemSet itemSet : itemSets3WithMinSup) itemSets3WithMinSupCLONE.add(new ItemSet(itemSet));
+
+        for (ItemSet mainItemset : itemSets3WithMinSupCLONE){
+            ItemSet tmp = mainItemset;
+            //Для каждого подсета
+            for (ItemSet subItemSet : mainItemset.getSubItemsSets()){
+                Rules rule = new Rules();
+                tmp.getItemSet().clear();
+                //Если подсет размером с один эелемент
+                if (subItemSet.getItemSet().size() == 1){
+                    rule.setFirst(subItemSet);
+                    double Confidence = 0;
+
+                    rule.setSecond(tmp);
+                    rule.getSecond().getItemSet().remove(rule.getFirstItem());
+
+
+                    Confidence = rule.getFirst().getSupp()/ rule.getSecond().getSupp();
+                    rule.setConfidence(Confidence);
+
+                    rule.setSelected(Confidence > 0.60);
+                    rules.add(rule);
+                }
+                //иначе может быть только когда в подсете два элемента!
+                else {}
+            }
+        }
+    }
+
+    //Работа с правилами
+    public void rulesWork(){
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Введите элемент для которого хотите найти правила ( ");
+        for (Item element : uniqueItems){
+            System.out.print(element.getName()+" ");
+        }
+        System.out.print("): \n");
+        String itemName = sc.nextLine();
+        Item item = null;
+        for (Item element : uniqueItems){
+            if (Objects.equals(element.getName(), itemName)){
+                item = element;
+                break;
+            }
+        }
+        if (item == null){
+            System.out.println("Вы ошиблись при вводе :(");
+            rulesWork();
+        }
+
 
     }
 
@@ -218,7 +352,8 @@ public class Apriori {
         findTripleItemSupport();
         deleteItemSets3WithoutMinSup();
         subSetAdd();
-
+        rulesGeneration();
+        rulesWork();
 
     }
 
